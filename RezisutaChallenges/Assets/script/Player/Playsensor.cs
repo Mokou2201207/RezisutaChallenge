@@ -42,14 +42,16 @@ public class Playsensor : MonoBehaviour
                 // 何かに当たった時：赤い線をヒットした場所まで引く
                 Debug.DrawLine(origin, hit.point, Color.red);
 
-                if (hit.collider.CompareTag("Enemy"))
+                // マネキンのスクリプトを取得してフラグを書き換える
+                var enemy = hit.collider.GetComponent<MannequinEnamy>();
+                if (enemy != null)
                 {
-                    Debug.Log("敵を発見！");
+                    enemy.isLookedAT = true; 
                 }
             }
             else
             {
-                // 何も当たっていない時：白い（または緑の）線を最大距離まで引く
+                // 何も当たっていない時
                 Debug.DrawRay(origin, direction * range, Color.green);
             }
         }
