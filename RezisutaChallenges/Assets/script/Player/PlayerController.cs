@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [Header("重力"), SerializeField]
     public float gravity = -9.81f;
 
+
     //保存用スピード
     private float speed;
 

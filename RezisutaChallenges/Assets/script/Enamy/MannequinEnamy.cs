@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -19,6 +20,8 @@ public class MannequinEnamy : MonoBehaviour
 
     [Header("きしむ音")]
     public AudioSource audioSource;
+    [Header("プレイヤを捕まえる位置"),SerializeField]
+    private Transform playergrab;
 
     private Animator animator;
 
@@ -30,6 +33,10 @@ public class MannequinEnamy : MonoBehaviour
     public bool isLookedAT;
     // 音を一度だけ鳴らすためのフラグ
     private bool hasPlayedPreSound = false;
+    //捕まったかどうか
+    private bool grab=false;
+    //プレイやーが死んだどうか
+    public bool playDie = false;
 
     private void Start()
     {
@@ -51,7 +58,7 @@ public class MannequinEnamy : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (target == null) return;
+        if (target == null||grab) return;
 
         if (isLookedAT)
         {
@@ -95,6 +102,61 @@ public class MannequinEnamy : MonoBehaviour
         }
         // 毎フレームリセット
         isLookedAT = false;
+    }
+
+    /// <summary>
+    /// ヒットしたのがPlayerなら捕まえる
+    /// </summary>
+    /// <param name="other"></param>
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            PlayerGrab();
+        }
+    }
+
+    /// <summary>
+    /// プレイヤを捕まえる処理
+    /// </summary>
+    private void PlayerGrab()
+    {
+        //二度つかめられないように
+        if (grab) return;
+
+        animator.Play("Grab");
+
+        playDie = true;
+        grab = true;
+        agent.isStopped=true;
+
+        Rigidbody playerRb = target.GetComponent<Rigidbody>();
+    if (playerRb != null)
+    {
+        playerRb.isKinematic = true; // 物理演算を止める
+        playerRb.useGravity = false; // 重力を切る
+    }
+
+        //プレイヤーが移動をできないように
+        CharacterController playerController=target.GetComponent<CharacterController>();
+        if (playerController!=null)
+        {
+            playerController.enabled = false;
+        }
+
+        PlayerController pc = target.GetComponent<PlayerController>();
+        if (pc != null)
+        {
+            pc.enabled = false;
+        }
+
+        //敵がプレイヤーの手に
+        target.transform.SetParent(playergrab);
+
+        //位置と回転をリセットして正面に
+        target.transform.localPosition= new Vector3(0, 0f, 0);
+        target.transform.localRotation = Quaternion.identity;
+        Debug.Log("プレイヤーを捕獲");
     }
 
     // カメラに映った時に呼ばれる
