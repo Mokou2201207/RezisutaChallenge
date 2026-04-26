@@ -34,9 +34,11 @@ public class MannequinEnamy : MonoBehaviour
     // 音を一度だけ鳴らすためのフラグ
     private bool hasPlayedPreSound = false;
     //捕まったかどうか
-    private bool grab=false;
+    [SerializeField]private bool grab=false;
     //プレイやーが死んだどうか
     public bool playDie = false;
+    //今ストップ状態か
+    private bool isStop=false;
 
     private void Start()
     {
@@ -71,6 +73,7 @@ public class MannequinEnamy : MonoBehaviour
         //「今見られている」か「目を離してから2秒以内」か「カメラに移ってない」なら停止
         if (stopCondition)
         {
+            isStop= true;
             agent.isStopped = true;
             agent.velocity = Vector3.zero;
 
@@ -94,6 +97,7 @@ public class MannequinEnamy : MonoBehaviour
         //sensorから外れたら追跡開始
         else
         {
+            isStop= false;
             agent.isStopped = false;
             agent.destination = target.transform.position;
 
@@ -121,25 +125,35 @@ public class MannequinEnamy : MonoBehaviour
     /// </summary>
     private void PlayerGrab()
     {
-        //二度つかめられないように
+        //二度つかめられないようにまたは動きが停止してるとき
         if (grab) return;
 
         animator.Play("Grab");
 
         playDie = true;
         grab = true;
-        agent.isStopped=true;
 
+        // エージェントとアニメーターの設定
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+        }
+
+        // 捕獲アニメーションを強制再生
+        animator.speed = 1f;
+        animator.Play("Grab", 0, 0f);
+
+        // プレイヤー側の制御を無効化
         Rigidbody playerRb = target.GetComponent<Rigidbody>();
-    if (playerRb != null)
-    {
-        playerRb.isKinematic = true; // 物理演算を止める
-        playerRb.useGravity = false; // 重力を切る
-    }
+        if (playerRb != null)
+        {
+            playerRb.isKinematic = true;
+            playerRb.useGravity = false;
+        }
 
-        //プレイヤーが移動をできないように
-        CharacterController playerController=target.GetComponent<CharacterController>();
-        if (playerController!=null)
+        CharacterController playerController = target.GetComponent<CharacterController>();
+        if (playerController != null)
         {
             playerController.enabled = false;
         }
@@ -150,13 +164,13 @@ public class MannequinEnamy : MonoBehaviour
             pc.enabled = false;
         }
 
-        //敵がプレイヤーの手に
+        //プレイヤーをマネキンの手に固定
         target.transform.SetParent(playergrab);
-
-        //位置と回転をリセットして正面に
-        target.transform.localPosition= new Vector3(0, 0f, 0);
+        target.transform.localPosition = Vector3.zero;
         target.transform.localRotation = Quaternion.identity;
-        Debug.Log("プレイヤーを捕獲");
+
+        Debug.Log("マネキンに接触：プレイヤーを捕獲しました");
+
     }
 
     // カメラに映った時に呼ばれる
