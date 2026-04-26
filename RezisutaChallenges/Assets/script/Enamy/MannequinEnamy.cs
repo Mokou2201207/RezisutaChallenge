@@ -132,6 +132,7 @@ public class MannequinEnamy : MonoBehaviour
 
         playDie = true;
         grab = true;
+        GameManager.instance.GameOver();
 
         // エージェントとアニメーターの設定
         if (agent != null)
