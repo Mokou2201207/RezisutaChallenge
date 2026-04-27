@@ -37,6 +37,7 @@ public class Playsensor : MonoBehaviour
             // Rayの発射位置
             Vector3 origin = transform.position + Vector3.up * 1.0f;
 
+            //特定のレイヤーにヒットしたら
             if (Physics.Raycast(origin, direction, out hit, range, targetLayer))
             {
                 // 何かに当たった時：赤い線をヒットした場所まで引く
@@ -46,7 +47,7 @@ public class Playsensor : MonoBehaviour
                 var enemy = hit.collider.GetComponent<MannequinEnamy>();
                 if (enemy != null)
                 {
-                    enemy.isLookedAT = true; 
+                    enemy.isLookedAT = true;
                 }
             }
             else
