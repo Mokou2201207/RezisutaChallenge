@@ -9,6 +9,9 @@ public class PlayerController : MonoBehaviour
     [Header("CharacterController(自動)"), SerializeField]
     private CharacterController controller;
 
+    [Header("ClimbController(自動)"), SerializeField]
+    private ClimbController climbController;
+
     [Header("Animator(自動)"), SerializeField]
     private Animator anim;
 
@@ -24,14 +27,16 @@ public class PlayerController : MonoBehaviour
     [Header("重力"), SerializeField]
     private float gravity = -9.81f;
 
-    [Header("ClimbController(自動)"), SerializeField]
-    private ClimbController climbController;
+
 
     //壁を登る際中か
     private bool isClimb = false;
+
     //保存用スピード
     private float speed;
 
+    //アイテム保存用変数
+    private GameObject carriedItem;
     //今の回転速度の保存変数
     private float turnSmoothVelocity;
     private Vector3 velocity;
@@ -73,17 +78,29 @@ public class PlayerController : MonoBehaviour
         Vector3 direction = new Vector3(verttical, 0f, -horisontal).normalized;
 
         if (anim != null)
+
         {
-            // まず今動いているかを判定して変数に入れる
+
+            // 今動いているかを判定して変数に入れる
+
             bool isMoving = direction.magnitude >= 0.05f;
 
+
+
             //移動しているかつ今のスピードが走る速度なら走っていると判定
+
             bool isRunning = isMoving && speed == runspeed;
 
+
+
             // 走っていない、かつ移動している時だけ歩きにする
+
             anim.SetBool("isWalking", isMoving && !isRunning);
+
             anim.SetBool("isRunning", isMoving && isRunning);
+
             //anim.SetBool("isRunning", isRunning);
+
         }
 
         //走る処理
@@ -185,3 +202,6 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Climb End: " + transform.position);
     }
 }
+
+
+
