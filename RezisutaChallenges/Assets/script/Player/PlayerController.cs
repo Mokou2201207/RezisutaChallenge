@@ -12,6 +12,9 @@ public class PlayerController : MonoBehaviour
     [Header("ClimbController(自動)"), SerializeField]
     private ClimbController climbController;
 
+    [Header("PlayerItemHandler(自動)"), SerializeField]
+    private PlayerItemHandler playerItemHandler;
+
     [Header("Animator(自動)"), SerializeField]
     private Animator anim;
 
@@ -60,6 +63,11 @@ public class PlayerController : MonoBehaviour
         {
             climbController = GetComponent<ClimbController>();
         }
+
+        if (playerItemHandler == null)
+        {
+            playerItemHandler = GetComponent<PlayerItemHandler>();
+        }
         //スピードを代入
         speed = Walkspeed;
     }
@@ -103,16 +111,17 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        //走る処理
-        //動いてるかつ,shiftを押してる場合
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            speed = runspeed;
-        }
-        //Shiftを離したら
-        if (Input.GetKeyUp(KeyCode.LeftShift))
+        //条件をshiftを押した際に決める
+        float targetSpeed = Input.GetKey(KeyCode.LeftShift) ? runspeed : Walkspeed;
+
+        // アイテムを持っているかで最終的な速度を上書きする
+        if (playerItemHandler.isHaveItem)
         {
             speed = Walkspeed;
+        }
+        else
+        {
+            speed = targetSpeed;
         }
 
         //登る処理

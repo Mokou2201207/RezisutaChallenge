@@ -8,6 +8,8 @@ public class PlayerItemHandler : MonoBehaviour
     [SerializeField] private float range = 1.5f;
     //¡Œ»İ‚Á‚Ä‚¢‚é‚à‚Ì
     private GameObject item; 
+    //ƒAƒCƒeƒ€‚ğ‚Á‚Ä‚¢‚é‚©
+    public bool isHaveItem=false;
 
     void Update()
     {
@@ -22,6 +24,7 @@ public class PlayerItemHandler : MonoBehaviour
     /// </summary>
     void Pick()
     {
+        isHaveItem = true;
         foreach (var col in Physics.OverlapSphere(transform.position, range))
         {
             if (col.CompareTag("Item"))
@@ -44,6 +47,7 @@ public class PlayerItemHandler : MonoBehaviour
     /// </summary>
     void Drop()
     {
+        isHaveItem = false;
         item.transform.SetParent(null);
         item.transform.position = transform.position + transform.forward * 0.8f + Vector3.up * 0.5f;
 
