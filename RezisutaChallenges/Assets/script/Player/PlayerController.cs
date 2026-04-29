@@ -6,25 +6,29 @@ using UnityEngine;
 /// </summary>
 public class PlayerController : MonoBehaviour
 {
-    [Header("CharacterController"), SerializeField]
-    public CharacterController controller;
+    [Header("CharacterController(自動)"), SerializeField]
+    private CharacterController controller;
 
-    [Header("Animator"), SerializeField]
+    [Header("Animator(自動)"), SerializeField]
     private Animator anim;
 
     [Header("歩く速度"), SerializeField]
-    public float Walkspeed = 2f;
+    private float Walkspeed = 2f;
 
     [Header("走る速度"), SerializeField]
-    public float runspeed = 4f;
+    private float runspeed = 4f;
 
     [Header("回転の滑らか"), SerializeField]
-    public float turnSmoothTime = 0.1f;
+    private float turnSmoothTime = 0.1f;
 
     [Header("重力"), SerializeField]
-    public float gravity = -9.81f;
+    private float gravity = -9.81f;
 
+    [Header("ClimbController(自動)"), SerializeField]
+    private ClimbController climbController;
 
+    //壁を登る際中か
+    private bool isClimb = false;
     //保存用スピード
     private float speed;
 
@@ -46,6 +50,11 @@ public class PlayerController : MonoBehaviour
         {
             anim = GetComponent<Animator>();
         }
+
+        if (climbController == null)
+        {
+            climbController = GetComponent<ClimbController>();
+        }
         //スピードを代入
         speed = Walkspeed;
     }
@@ -55,6 +64,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        if (isClimb) return;
         //WASDの入力
         float horisontal = Input.GetAxisRaw("Horizontal");
         float verttical = Input.GetAxisRaw("Vertical");
@@ -72,7 +82,7 @@ public class PlayerController : MonoBehaviour
 
             // 走っていない、かつ移動している時だけ歩きにする
             anim.SetBool("isWalking", isMoving && !isRunning);
-            anim.SetBool("isRunning", isMoving&&isRunning);
+            anim.SetBool("isRunning", isMoving && isRunning);
             //anim.SetBool("isRunning", isRunning);
         }
 
@@ -80,13 +90,25 @@ public class PlayerController : MonoBehaviour
         //動いてるかつ,shiftを押してる場合
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            speed=runspeed;
+            speed = runspeed;
         }
         //Shiftを離したら
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             speed = Walkspeed;
         }
+
+        //登る処理
+        if (climbController.isHit)
+        {
+            if (Input.GetKeyDown(KeyCode.Space) && !isClimb)
+            {
+                PlayerClimb();
+                return;
+            }
+        }
+
+
 
         //回転処理
         //移動キーが押されているか
@@ -110,5 +132,56 @@ public class PlayerController : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    /// <summary>
+    /// ブロックへ登る処理
+    /// </summary>
+    void PlayerClimb()
+    {
+        if (isClimb) return;
+        isClimb = true;
+
+        //落下防止
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+        }
+        controller.enabled = false;
+
+        //落下速度をリセット
+        velocity = Vector3.zero;
+        anim.SetTrigger("Climb");
+    }
+
+    /// <summary>
+    /// アニメーションイベントで処理
+    /// </summary>
+    public void PlayerClimbAnimEnd()
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+        }
+
+        // 重要：enabledを戻す前にvelocityを完全にゼロにする
+        velocity = Vector3.zero;
+
+        // --- ここを修正 ---
+        Vector3 currentPos = transform.position;
+        // 0.3f は大きすぎました。Root Motionが効いているなら、ここはもっと小さく。
+        // ブロックの上に埋まらないように、わずかに（5cm）浮かせるだけにします。
+        transform.position = new Vector3(currentPos.x, currentPos.y + 0.05f, currentPos.z);
+
+        // 当たり判定を復活
+        controller.enabled = true;
+
+        // 接地判定を完全にリセット
+        velocity.y = 0;
+
+        isClimb = false;
+        Debug.Log("Climb End: " + transform.position);
     }
 }

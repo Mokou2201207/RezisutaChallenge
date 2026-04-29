@@ -11,9 +11,9 @@ public class ClimbController : MonoBehaviour
     [Header("前方への判定距離"), SerializeField]
     private float rayDistance = 0.7f;
     [Header("ビームを出す高さ"), SerializeField]
-    public float rayHeight = 0.6f;
+    private float rayHeight = 0.6f;
     [Header("判定したいレイヤー"), SerializeField]
-    public LayerMask climbLayer;
+    private LayerMask climbLayer;
 
     public bool isHit = false;
 

@@ -830,6 +830,7 @@ MonoBehaviour:
   runspeed: 4
   turnSmoothTime: 0.1
   gravity: -9.81
+  climbController: {fileID: 0}
 --- !u!95 &26765860
 Animator:
   serializedVersion: 5
@@ -843,7 +844,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: eb932e4bcde4a5d4b9eb24c68336509a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -19052,6 +19053,10 @@ PrefabInstance:
     - target: {fileID: 7162556604875246030, guid: 73543e1548e024ee5a71c4c39766822b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7272251501824372256, guid: 73543e1548e024ee5a71c4c39766822b, type: 3}
+      propertyPath: m_Height
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 7272251501824372256, guid: 73543e1548e024ee5a71c4c39766822b, type: 3}
       propertyPath: m_Radius
@@ -45409,8 +45414,8 @@ Transform:
   m_GameObject: {fileID: 1780512400}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 109.282265, y: 1.106, z: 20.99399}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 109.491, y: 0.963, z: 28.347}
+  m_LocalScale: {x: 1, y: 0.35772508, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
