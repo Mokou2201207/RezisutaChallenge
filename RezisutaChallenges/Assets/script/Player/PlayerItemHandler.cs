@@ -25,11 +25,11 @@ public class PlayerItemHandler : MonoBehaviour
     /// </summary>
     void Pick()
     {
-        isHaveItem = true;
         foreach (var col in Physics.OverlapSphere(transform.position, range))
         {
             if (col.CompareTag("Item"))
             {
+                isHaveItem = true;
                 item = col.gameObject;
                 item.transform.SetParent(hand);
                 item.transform.localPosition = Vector3.zero;
