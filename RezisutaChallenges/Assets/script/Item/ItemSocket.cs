@@ -28,6 +28,10 @@ public class ItemSocket : MonoBehaviour
 
                 OnSuccess.Invoke();
 
+                Outline outlineScript = GetComponent<Outline>();
+                //このオブジェクトのハイライトを消す
+                outlineScript.enabled = false;
+
                 // 使ったアイテムを消す
                 Destroy(currentItem.gameObject);
                 currentItem = null;
