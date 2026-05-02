@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -139,14 +139,27 @@ public class MannequinEnamy : MonoBehaviour
         {
             agent.isStopped = true;
             agent.velocity = Vector3.zero;
-            agent.enabled = false; // 物理干渉を避けるため無効化するのもアリ
+            agent.enabled = false;
         }
 
         animator.speed = 1f;
         animator.Play("Grab", 0, 0f);
 
-        // 2. プレイヤー側の全物理・衝突判定をオフにする
-        // これをしないと、マネキンのコライダーを踏みつけてしまいます
+        // 2. プレイヤー側のスクリプト・物理・衝突判定を全てオフにする
+        // ★ PlayerControllerを無効化しないとUpdate内で位置が上書きされて浮く
+        PlayerController playerScript = target.GetComponent<PlayerController>();
+        if (playerScript != null)
+        {
+            playerScript.enabled = false;
+        }
+
+        // ★ プレイヤーのAnimatorも無効化（アニメーションが位置を動かすのを防ぐ）
+        Animator playerAnim = target.GetComponent<Animator>();
+        if (playerAnim != null)
+        {
+            playerAnim.enabled = false;
+        }
+
         CharacterController playerController = target.GetComponent<CharacterController>();
         if (playerController != null)
         {
@@ -156,21 +169,20 @@ public class MannequinEnamy : MonoBehaviour
         Rigidbody playerRb = target.GetComponent<Rigidbody>();
         if (playerRb != null)
         {
-            playerRb.isKinematic = true; // 物理演算を完全に止める
-            playerRb.detectCollisions = false; // ★当たり判定自体を消す
+            playerRb.isKinematic = true;
+            playerRb.detectCollisions = false;
         }
 
         // 3. 親子付け
         target.transform.SetParent(playergrab);
 
-        // --- ここがポイント！ ---
-        // Vector3.zeroだと足元（ピボット）が重なるので、
-        // プレイヤーの腰や胸がマネキンの手に来るように高さを調整します
-        // (yを0.5f〜1.0fくらいにすると「持ち上げられた感」が出ます)
-        target.transform.localPosition = new Vector3(0, 0.5f, 0);
+        // ローカル位置をゼロにして、playergrabの位置にぴったり合わせる
+        // ※ もしプレイヤーのピボットが足元にある場合は、Yを少し下げて調整してください
+        //   例: new Vector3(0, -0.5f, 0) など
+        target.transform.localPosition = Vector3.zero;
         target.transform.localRotation = Quaternion.identity;
 
-        Debug.Log("マネキン：物理干渉を無効化して捕獲しました");
+        Debug.Log("マネキン：プレイヤーを捕獲しました");
     }
 
     // カメラに映った時に呼ばれる
