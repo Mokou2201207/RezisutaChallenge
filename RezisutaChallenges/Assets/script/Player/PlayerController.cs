@@ -6,11 +6,15 @@ using UnityEngine;
 /// </summary>
 public class PlayerController : MonoBehaviour
 {
-    [Header("自動コンポーネント"), SerializeField]
-    private CharacterController controller;
-    private ClimbController climbController;
-    private PlayerItemHandler playerItemHandler;
-    private Animator anim;
+    [Header("自動コンポーネント")]
+    [SerializeField] private CharacterController controller;
+    [SerializeField] private ClimbController climbController;
+    [SerializeField] private PlayerItemHandler playerItemHandler;
+    [SerializeField] private Animator anim;
+    [SerializeField] private PlayerTP playerTPScript;
+
+    [Header("EntranceBoxのscriptをアタッチ"), SerializeField]
+    private EntranceBox entranceBoxScript;
 
     //速度
     [Header("歩く速度"), SerializeField]
@@ -38,6 +42,8 @@ public class PlayerController : MonoBehaviour
 
     //登り中フラグ
     private bool isClimb = false;
+    //Tpのボタンを押したか
+    private bool isTp = false;
 
     //保存用スピード
     private float speed;
@@ -78,6 +84,17 @@ public class PlayerController : MonoBehaviour
         if (playerItemHandler == null)
         {
             playerItemHandler = GetComponent<PlayerItemHandler>();
+        }
+
+        if (playerTPScript == null)
+        {
+            playerTPScript = GetComponent<PlayerTP>();
+        }
+
+        //デバックエラー用
+        if (entranceBoxScript == null)
+        {
+            Debug.LogError("entranceBoxScriptがアタッチされていません");
         }
 
         // Root Motionを無効化
@@ -154,6 +171,19 @@ public class PlayerController : MonoBehaviour
             {
                 PlayerClimb();
                 return;
+            }
+        }
+
+        //入口のフラグがOnになっていたら
+        if (entranceBoxScript.isInAria)
+        {
+            //二度おし対策
+            if (isTp) return;
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                isTp = true;
+                playerTPScript.PlayerTeleport();
             }
         }
 
