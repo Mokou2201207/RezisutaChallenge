@@ -42,6 +42,12 @@ public class MannequinEnamy : MonoBehaviour
 
     private void Start()
     {
+        //プレイヤーがないならタグで取る
+        if (target==null)
+        {
+            target= GameObject.FindGameObjectWithTag("Player");
+        }
+
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
 

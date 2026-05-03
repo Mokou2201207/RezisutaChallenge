@@ -47,6 +47,9 @@ public class PlayerTP : MonoBehaviour
         //Playerの位置を替える
         transform.position = tpTransform.position;
 
+        //敵をスポーン
+        SpawnManager.instance.SpawnByLabel("MainStageEnamy");
+
         yield return new WaitForSeconds(2f);
 
         //少しずつ明るく
