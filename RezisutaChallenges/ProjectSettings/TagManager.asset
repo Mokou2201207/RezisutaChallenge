@@ -6,6 +6,12 @@ TagManager:
   tags:
   - Enemy
   - Item
+  - EntranceBox
+  - DarkPanel
+  - BrightlyPanel
+  - TPDestination
+  - CameraA
+  - CameraB
   layers:
   - Default
   - TransparentFX

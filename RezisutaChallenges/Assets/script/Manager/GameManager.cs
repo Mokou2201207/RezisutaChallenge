@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private AudioSource audioSource;
 
+    //リスタートする名前（場所がステージによって変わるため）
+    public string restartPositionName= "TutorialStage";
+
 
     //プレイヤーが死んだかどうか
     public bool PlayerDie=false;
@@ -53,9 +56,17 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     private IEnumerator RestartGame()
     {
-        gameOverPanel.gameObject.SetActive(true);
-        yield return new WaitForSeconds(6f);
-        SceneManager.LoadScene("MainScene");
+        if (gameOverPanel != null) gameOverPanel.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(3f);
+
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
+        // シーンをロード
+        SceneManager.LoadScene(currentSceneName);
+
+        // もしGameManagerが消えない設定なら、ここでフラグをリセット
+        PlayerDie = false;
     }
 
 }

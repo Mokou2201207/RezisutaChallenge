@@ -20,20 +20,23 @@ public class SpawnManager : MonoBehaviour
     [System.Serializable]
     public class SpawnSettings
     {
-        [Header("–¼‘O"), SerializeField]
+        [Header("åå‰"), SerializeField]
         public string label;
 
         [Header("prefab"), SerializeField]
         public GameObject prefab;
 
-        [Header("oŒ»êŠ"), SerializeField]
+        [Header("å‡ºç¾å ´æ‰€"), SerializeField]
         public Transform[] spawnPoints;
 
-        [Header("ŠJn‚ÉƒXƒ|[ƒ“‚·‚é‚©")]
+        [Header("é–‹å§‹ã«ã‚¹ãƒãƒ¼ãƒ³ã™ã‚‹ã‹")]
         public bool isAutoSpawn = false;
+
+        [Header("Playerã‚¹ãƒãƒ¼ãƒ³ã‹ï¼ˆè‡ªå‹•ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—ã™ã‚‹ï¼‰")]
+        public bool isPlayer = false;
     }
 
-    [Header("ƒXƒ|[ƒ“İ’èƒŠƒXƒg"), SerializeField]
+    [Header("ã‚¹ãƒãƒ¼ãƒ³è¨­å®šãƒªã‚¹ãƒˆ"), SerializeField]
     public List<SpawnSettings> spawnList;
 
     private void Start()
@@ -51,7 +54,13 @@ public class SpawnManager : MonoBehaviour
             {
                 if (p != null)
                 {
-                    Instantiate(group.prefab, p.position, p.rotation);
+                    GameObject spawned = Instantiate(group.prefab, p.position, p.rotation);
+
+                    // Playerã‚¹ãƒãƒ¼ãƒ³ãªã‚‰è‡ªå‹•ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
+                    if (group.isPlayer)
+                    {
+                        PlayerSetup.Setup(spawned);
+                    }
                 }
             }
         }
@@ -59,7 +68,7 @@ public class SpawnManager : MonoBehaviour
 
     public void SpawnByLabel(string label)
     {
-        // ƒŠƒXƒg‚Ì’†‚©‚ç label ‚ªˆê’v‚·‚éİ’è‚ğ’T‚·
+        // ãƒªã‚¹ãƒˆã®ä¸­ã‹ã‚‰labelãŒä¸€è‡´ã™ã‚‹è¨­å®šã‚’æ¢ã™
         SpawnSettings settings = spawnList.Find(s => s.label == label);
 
         if (settings != null && settings.prefab != null)
@@ -68,7 +77,13 @@ public class SpawnManager : MonoBehaviour
             {
                 if (p != null)
                 {
-                    Instantiate(settings.prefab, p.position, p.rotation);
+                    GameObject spawned = Instantiate(settings.prefab, p.position, p.rotation);
+
+                    // Playerã‚¹ãƒãƒ¼ãƒ³ãªã‚‰è‡ªå‹•ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
+                    if (settings.isPlayer)
+                    {
+                        PlayerSetup.Setup(spawned);
+                    }
                 }
             }
         }

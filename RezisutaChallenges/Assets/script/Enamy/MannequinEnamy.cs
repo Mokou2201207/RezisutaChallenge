@@ -66,7 +66,12 @@ public class MannequinEnamy : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (target == null||grab) return;
+        if (target == null)
+        {
+            target = GameObject.FindGameObjectWithTag("Player");
+            if (target == null) return;
+        }
+        if (grab) return;
 
         if (isLookedAT)
         {

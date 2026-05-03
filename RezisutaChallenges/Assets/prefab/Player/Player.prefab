@@ -1120,6 +1120,7 @@ GameObject:
   - component: {fileID: 1120377469458211155}
   - component: {fileID: 4140638364667429276}
   - component: {fileID: 8732845752084715645}
+  - component: {fileID: 7402601789632709830}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1185,10 +1186,19 @@ MonoBehaviour:
   climbController: {fileID: 0}
   playerItemHandler: {fileID: 0}
   anim: {fileID: 0}
+  playerTPScript: {fileID: 0}
+  entranceBoxScript: {fileID: 0}
   Walkspeed: 2
   runspeed: 4
   turnSmoothTime: 0.1
   gravity: -9.81
+  climbDuration: 1
+  climbForwardDistance: 0.3
+  wallOffset: 0.3
+  climbIKLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  handIKRayDistance: 1
 --- !u!95 &2374240019928727941
 Animator:
   serializedVersion: 5
@@ -1311,6 +1321,23 @@ MonoBehaviour:
   hand: {fileID: 5911663769417532140}
   range: 1.5
   isHaveItem: 0
+--- !u!114 &7402601789632709830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7506748393143128948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a52d50f7197a50344883428c5f217b05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tpTransform: {fileID: 0}
+  darkPanel: {fileID: 0}
+  brightlyPanal: {fileID: 0}
+  cameraA: {fileID: 0}
+  cameraB: {fileID: 0}
 --- !u!1 &7728617500967143914
 GameObject:
   m_ObjectHideFlags: 0
@@ -1399,7 +1426,7 @@ Transform:
   m_GameObject: {fileID: 7977879399727887584}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.013, y: -0.282, z: 0.43}
+  m_LocalPosition: {x: 0.01, y: 0.1, z: 0.43}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

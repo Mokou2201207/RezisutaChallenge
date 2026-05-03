@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator anim;
     [SerializeField] private PlayerTP playerTPScript;
 
-    [Header("EntranceBoxのscriptをアタッチ"), SerializeField]
     private EntranceBox entranceBoxScript;
 
     //速度
@@ -91,10 +90,19 @@ public class PlayerController : MonoBehaviour
             playerTPScript = GetComponent<PlayerTP>();
         }
 
-        //デバックエラー用
+        //EntranceBoxをTagで自動取得
         if (entranceBoxScript == null)
         {
-            Debug.LogError("entranceBoxScriptがアタッチされていません");
+            GameObject entranceObj = GameObject.FindGameObjectWithTag("EntranceBox");
+            if (entranceObj != null)
+            {
+                entranceBoxScript = entranceObj.GetComponent<EntranceBox>();
+            }
+
+            if (entranceBoxScript == null)
+            {
+                Debug.LogError("EntranceBoxが見つかりません。TagにEntranceBoxを設定してください");
+            }
         }
 
         // Root Motionを無効化
@@ -175,7 +183,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //入口のフラグがOnになっていたら
-        if (entranceBoxScript.isInAria)
+        if (entranceBoxScript != null && entranceBoxScript.isInAria)
         {
             //二度おし対策
             if (isTp) return;

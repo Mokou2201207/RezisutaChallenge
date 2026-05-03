@@ -6,26 +6,58 @@ using UnityEngine.UI;
 
 public class PlayerTP : MonoBehaviour
 {
-    [Header("目的地の行先"), SerializeField]
     private Transform tpTransform;
-
-    [Header("画面が暗くなるパネル"), SerializeField]
     private Image darkPanel;
-
-    [Header("画面が明るくなるパネル"), SerializeField]
     private Image brightlyPanal;
-
-    [Header("エリア1のカメラ")]
     public CinemachineVirtualCamera cameraA;
-
-    [Header("エリア2のカメラ")]
     public CinemachineVirtualCamera cameraB;
+
+    private void Start()
+    {
+        // TPの行先をTagで自動取得
+        if (tpTransform == null)
+        {
+            GameObject tpObj = GameObject.FindGameObjectWithTag("TPDestination");
+            if (tpObj != null) tpTransform = tpObj.transform;
+        }
+
+        // 暗くなるパネルをTagで自動取得
+        if (darkPanel == null)
+        {
+            GameObject darkObj = GameObject.FindGameObjectWithTag("DarkPanel");
+            if (darkObj != null) darkPanel = darkObj.GetComponent<Image>();
+        }
+
+        // 明るくなるパネルをTagで自動取得
+        if (brightlyPanal == null)
+        {
+            GameObject brightObj = GameObject.FindGameObjectWithTag("BrightlyPanel");
+            if (brightObj != null) brightlyPanal = brightObj.GetComponent<Image>();
+        }
+
+        // カメラをTagで自動取得
+        if (cameraA == null)
+        {
+            GameObject camAObj = GameObject.FindGameObjectWithTag("CameraA");
+            if (camAObj != null) cameraA = camAObj.GetComponent<CinemachineVirtualCamera>();
+        }
+
+        if (cameraB == null)
+        {
+            GameObject camBObj = GameObject.FindGameObjectWithTag("CameraB");
+            if (camBObj != null) cameraB = camBObj.GetComponent<CinemachineVirtualCamera>();
+        }
+
+        //画像を非表示
+        darkPanel.gameObject.SetActive(false);
+    }
 
     /// <summary>
     /// PlayerがTPする処理
     /// </summary>
     public void PlayerTeleport()
     {
+        Debug.Log("[PlayerTP] PlayerTeleportが呼ばれました");
         StartCoroutine(TPCollection());
     }
 
@@ -36,16 +68,33 @@ public class PlayerTP : MonoBehaviour
     private IEnumerator TPCollection()
     {
         //画面をゆっくり暗く
-        darkPanel.gameObject.SetActive(true);
-        brightlyPanal.gameObject.SetActive(false);
+        if (darkPanel != null) darkPanel.gameObject.SetActive(true);
+        else Debug.LogWarning("[PlayerTP] darkPanelがnullです");
+
+        if (brightlyPanal != null) brightlyPanal.gameObject.SetActive(false);
         yield return new WaitForSeconds(4f);
 
         //カメラの優先度を変更
         ResetAllPriorities();
-        cameraB.Priority = 20;
+        if (cameraB != null) cameraB.Priority = 20;
 
         //Playerの位置を替える
-        transform.position = tpTransform.position;
+        if (tpTransform != null)
+        {
+            // CharacterControllerを一時的に無効にして位置を変更
+            CharacterController cc = GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+
+            transform.position = tpTransform.position;
+
+            if (cc != null) cc.enabled = true;
+
+            Debug.Log("[PlayerTP] プレイヤーをTPしました: " + tpTransform.position);
+        }
+        else
+        {
+            Debug.LogWarning("[PlayerTP] tpTransformがnullでTPできません");
+        }
 
         //敵をスポーン
         SpawnManager.instance.SpawnByLabel("MainStageEnamy");
@@ -53,8 +102,8 @@ public class PlayerTP : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         //少しずつ明るく
-        darkPanel.gameObject.SetActive(false);
-        brightlyPanal.gameObject.SetActive(true);
+        if (darkPanel != null) darkPanel.gameObject.SetActive(false);
+        if (brightlyPanal != null) brightlyPanal.gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -62,7 +111,7 @@ public class PlayerTP : MonoBehaviour
     /// </summary>
     private void ResetAllPriorities()
     {
-        cameraA.Priority = 10;
-        cameraB.Priority = 10;
+        if (cameraA != null) cameraA.Priority = 10;
+        if (cameraB != null) cameraB.Priority = 10;
     }
 }
