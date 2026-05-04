@@ -6,11 +6,25 @@ using UnityEngine.UI;
 
 public class PlayerTP : MonoBehaviour
 {
+    [Header("テレポートする場所"), SerializeField]
     private Transform tpTransform;
+    [Header("画面が暗くなるパネル"), SerializeField]
     private Image darkPanel;
+    [Header("画面が明るくなるパネル"),SerializeField]
     private Image brightlyPanal;
+    [Header("今使っているカメラ")]
     public CinemachineVirtualCamera cameraA;
+    [Header("切り替えるカメラ")]
     public CinemachineVirtualCamera cameraB;
+
+    [Header("TP後のリスポーン地点のラベル")]
+    public string nextRespawnLabel = "MainStage";
+
+    [Header("TP後のカメラのタグ（死んだ後に復帰するカメラ）")]
+    public string nextCameraTag = "CameraB";
+
+    [Header("TP後の敵グループのラベル")]
+    public string nextEnemyLabel = "MainStageEnamy";
 
     private void Start()
     {
@@ -57,7 +71,14 @@ public class PlayerTP : MonoBehaviour
     /// </summary>
     public void PlayerTeleport()
     {
-        Debug.Log("[PlayerTP] PlayerTeleportが呼ばれました");
+        // リスタート位置を更新
+        if (!string.IsNullOrEmpty(nextRespawnLabel))
+        {
+            GameManager.savedRestartPosition = nextRespawnLabel;
+            GameManager.activeCameraTag = nextCameraTag;
+            GameManager.activeEnemyLabel = nextEnemyLabel;
+        }
+
         StartCoroutine(TPCollection());
     }
 
@@ -93,11 +114,14 @@ public class PlayerTP : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[PlayerTP] tpTransformがnullでTPできません");
+            Debug.LogError("[PlayerTP] tpTransformがnullでTPできません");
         }
 
         //敵をスポーン
-        SpawnManager.instance.SpawnByLabel("MainStageEnamy");
+        if (!string.IsNullOrEmpty(nextEnemyLabel))
+        {
+            SpawnManager.instance.SpawnByLabel(nextEnemyLabel);
+        }
 
         yield return new WaitForSeconds(2f);
 

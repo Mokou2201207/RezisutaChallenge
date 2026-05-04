@@ -44,11 +44,36 @@ public class SpawnManager : MonoBehaviour
         SpawnAllGroups();
     }
 
+    /// <summary>
+    /// ゲーム開始時に呼び出すものの処理
+    /// </summary>
     public void SpawnAllGroups()
     {
         foreach (var group in spawnList)
         {
-            if (!group.isAutoSpawn || group.prefab == null) continue;
+            if (group.prefab == null) continue;
+
+            // Playerの場合は、GameManagerが記憶している復活地点とラベルが一致するものだけを出す
+            if (group.isPlayer)
+            {
+                if (group.label != GameManager.savedRestartPosition)
+                {
+                    continue;
+                }
+            }
+            else
+            {
+                // GameManagerに「今のステージの敵」が記録されていて、それと名前が一致すればスポーンさせる
+                if (!string.IsNullOrEmpty(GameManager.activeEnemyLabel) && group.label == GameManager.activeEnemyLabel)
+                {
+                    // スポーンさせるのでそのまま下へ進む
+                }
+                // それ以外は今まで通り isAutoSpawn で判定
+                else if (!group.isAutoSpawn) 
+                {
+                    continue;
+                }
+            }
 
             foreach (Transform p in group.spawnPoints)
             {
@@ -66,6 +91,10 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ゲームを起動してる際に途中から呼び込む処理
+    /// </summary>
+    /// <param name="label"></param>
     public void SpawnByLabel(string label)
     {
         // リストの中からlabelが一致する設定を探す
