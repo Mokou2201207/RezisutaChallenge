@@ -14,7 +14,7 @@ public class PlayerSetup : MonoBehaviour
         // Tagを設定
         player.tag = "Player";
 
-        // 必要なスクリプトを自動アタッチ（既にあればスキップ）
+        // 必要なスクリプトを自動アタッチ
         if (player.GetComponent<PlayerController>() == null)
             player.AddComponent<PlayerController>();
 

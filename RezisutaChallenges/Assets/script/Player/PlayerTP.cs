@@ -23,7 +23,7 @@ public class PlayerTP : MonoBehaviour
     [Header("TP後のカメラのタグ（死んだ後に復帰するカメラ）")]
     public string nextCameraTag = "CameraB";
 
-    [Header("TP後の敵グループのラベル")]
+    [Header("TP後の敵のラベル（空なら敵はスポーンしない）")]
     public string nextEnemyLabel = "MainStageEnamy";
 
     private void Start()
@@ -76,8 +76,10 @@ public class PlayerTP : MonoBehaviour
         {
             GameManager.savedRestartPosition = nextRespawnLabel;
             GameManager.activeCameraTag = nextCameraTag;
-            GameManager.activeEnemyLabel = nextEnemyLabel;
         }
+
+        // リスタート後にスポーンする敵のラベルを記録（空ならスポーンしない）
+        GameManager.activeEnemyLabel = nextEnemyLabel;
 
         StartCoroutine(TPCollection());
     }
